@@ -12,6 +12,7 @@ const { v4: uuidv4 } = require("uuid");
 const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
+const Place = require("./models/Place");
 
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = process.env.JWT_SECRET;
@@ -123,6 +124,37 @@ app.post("/upload", photosMiddleware.array("photos", 10), (req, res) => {
     uploadedFiles.push(relativePath);
   }
   res.json(uploadedFiles);
+});
+
+app.post("/places", async (req, res) => {
+  const {
+    owner,
+    title,
+    addedPhotos,
+    adress,
+    description,
+    perks,
+    extraInfo,
+    checkOut,
+    maxGuests,
+  } = req.body;
+  try {
+    const newHome = await Place.create({
+      owner,
+      title,
+      addedPhotos,
+      adress,
+      description,
+      perks,
+      extraInfo,
+      checkOut,
+      maxGuests,
+    });
+    await newHome.save();
+    res.json(newHome);
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
 });
 
 const PORT = process.env.LOCAL_PORT || 4000;
