@@ -127,34 +127,102 @@ app.post("/upload", photosMiddleware.array("photos", 10), (req, res) => {
 });
 
 app.post("/places", async (req, res) => {
+  const { token } = req.cookies;
   const {
-    owner,
     title,
+    address,
+    name,
     addedPhotos,
-    adress,
     description,
     perks,
     extraInfo,
+    checkIn,
     checkOut,
     maxGuests,
+    price,
   } = req.body;
-  try {
-    const newHome = await Place.create({
-      owner,
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    const placeDoc = await Place.create({
+      owner: userData.id,
+      name,
       title,
-      addedPhotos,
-      adress,
+      address,
+      photos: addedPhotos,
       description,
       perks,
       extraInfo,
+      checkIn,
       checkOut,
       maxGuests,
+      price,
     });
-    await newHome.save();
-    res.json(newHome);
-  } catch (error) {
-    res.status(500).json(error.message);
-  }
+    res.json(placeDoc);
+  });
+});
+
+app.get("/places", (req, res) => {
+  const { token } = req.cookies;
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (err) throw err;
+    try {
+      const { id } = userData;
+      res.json(await Place.find({ owner: id }));
+    } catch (error) {
+      res.status(500).json(error.message);
+    }
+  });
+});
+
+app.get("/places/:id", async (req, res) => {
+  res.json(await Place.findById(req.params.id));
+});
+
+app.get("/places/:id/edit", async (req, res) => {
+  res.json(await Place.findById(req.params.id));
+});
+
+app.put("/places", async (req, res) => {
+  const { token } = req.cookies;
+  const {
+    id,
+    title,
+    address,
+    name,
+    addedPhotos,
+    description,
+    perks,
+    extraInfo,
+    checkIn,
+    checkOut,
+    maxGuests,
+    price,
+  } = req.body;
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    const placeDoc = await Place.findById(id);
+    if (err) throw err;
+    try {
+      const { id } = userData;
+      if (id === placeDoc.owner.toString()) {
+        placeDoc.set({
+          name,
+          title,
+          address,
+          photos: addedPhotos,
+          description,
+          perks,
+          extraInfo,
+          checkIn,
+          checkOut,
+          maxGuests,
+          price,
+        });
+        await placeDoc.save();
+        res.json("ok");
+      }
+    } catch (error) {
+      res.status(500).json(error.message);
+    }
+  });
 });
 
 const PORT = process.env.LOCAL_PORT || 4000;
