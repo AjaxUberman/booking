@@ -13,6 +13,7 @@ const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
 const Place = require("./models/Place");
+const Booking = require("./models/Booking");
 
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = process.env.JWT_SECRET;
@@ -223,6 +224,61 @@ app.put("/places", async (req, res) => {
       res.status(500).json(error.message);
     }
   });
+});
+
+app.get("/main", async (req, res) => {
+  res.json(await Place.find());
+});
+
+app.get("/users/:id", (req, res) => {
+  const { token } = req.cookies;
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (userData.id === req.params.id) {
+      res.json(await userData.id);
+    }
+  });
+});
+
+app.post("/booking", async (req, res) => {
+  const { token } = req.cookies;
+  const { startDate, endDate, totalPrice, place, guest } = req.body;
+  try {
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+      if (err) throw err;
+      const newBooking = await Booking.create({
+        startDate,
+        endDate,
+        totalPrice,
+        place,
+        guest,
+        user: userData.id,
+      });
+      await newBooking.save();
+    });
+    res.json("Ok");
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get("/booking", async (req, res) => {
+  const { token } = req.cookies;
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (err) throw err;
+    const bookingById = await Booking.find({ user: userData.id }).populate(
+      "place"
+    );
+    res.json(bookingById);
+  });
+});
+
+app.delete("/booking/:bookingId", async (req, res) => {
+  const { bookingId } = req.params;
+  try {
+    await Booking.findByIdAndDelete(bookingId);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 const PORT = process.env.LOCAL_PORT || 4000;
