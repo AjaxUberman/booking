@@ -12,6 +12,6 @@
     "uuidv4": "^6.2.13"
   },
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "node index.js"
   }
 }
