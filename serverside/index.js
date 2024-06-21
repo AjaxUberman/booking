@@ -233,8 +233,10 @@ app.get("/main", async (req, res) => {
 app.get("/users/:id", (req, res) => {
   const { token } = req.cookies;
   jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-    if (userData.id === req.params.id) {
+    if (userData && userData.id === req.params.id) {
       res.json(await userData.id);
+    } else if (!userData) {
+      res.json(false);
     }
   });
 });
