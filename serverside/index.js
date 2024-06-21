@@ -283,7 +283,16 @@ app.delete("/booking/:bookingId", async (req, res) => {
   }
 });
 
-const PORT = process.env.LOCAL_PORT || 4000;
+app.delete("/places/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await Place.findByIdAndDelete(id);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log("Server is Running");
 });
