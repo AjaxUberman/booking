@@ -21,13 +21,12 @@ const jwtSecret = process.env.JWT_SECRET;
 app.use(express.json());
 app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use(cookieParser());
-app.use(
-  cors({
-    credentials: true,
-    origin: "http://bookingfullstack.netlify.app",
-  })
-);
-app.options("*", cors());
+const corsOptions = {
+  origin: "http://https://bookingfullstack.netlify.app",
+  credentials: true,
+  optionSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 
 mongoose.connect(process.env.MONGO_URL);
 
