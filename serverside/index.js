@@ -30,7 +30,7 @@ app.use("/uploads", express.static(__dirname + "/uploads"));
 
 app.use(cookieParser());
 const corsOptions = {
-  origin: "https://https://bookingfullstack.netlify.app",
+  origin: "http://bookingfullstack.netlify.app",
   credentials: true,
   optionSuccessStatus: 200,
 };
