@@ -22,7 +22,7 @@ app.use(express.json());
 app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use(cookieParser());
 const corsOptions = {
-  origin: "http://https://bookingfullstack.netlify.app",
+  origin: "https://https://bookingfullstack.netlify.app",
   credentials: true,
   optionSuccessStatus: 200,
 };
