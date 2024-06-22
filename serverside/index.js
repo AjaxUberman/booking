@@ -25,8 +25,9 @@ app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use(
   cors({
     origin: [
-      "http://bookingfullstack.netlify.app",
-      "https://bookingfullstack.netlify.app",
+      "http://bookingfullstack.com.tr",
+      "https://bookingfullstack.com.tr",
+      "https://localhost:3000",
       "http://localhost:3000",
     ],
     credentials: true,
