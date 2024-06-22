@@ -27,6 +27,7 @@ app.use(
     origin: "http://bookingfullstack.netlify.app",
   })
 );
+app.options("*", cors());
 
 mongoose.connect(process.env.MONGO_URL);
 
