@@ -71,7 +71,13 @@ app.post("/login", async (req, res) => {
             if (error) {
               throw error;
             } else {
-              res.cookie("token", token).json(userDoc);
+              res
+                .cookie("token", token, {
+                  httpOnly: true,
+                  secure: true,
+                  sameSite: "None",
+                })
+                .json(userDoc);
             }
           }
         );
