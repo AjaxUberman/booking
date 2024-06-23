@@ -29,6 +29,8 @@ app.use(
       "https://bookingfullstack.com.tr",
       "https://localhost:3000",
       "http://localhost:3000",
+      "https://bookingfullstack.netlify.app",
+      "http://bookingfullstack.netlify.app",
     ],
     credentials: true,
     methods: ["GET", "POST", "DELETE", "PUT"],
@@ -75,8 +77,7 @@ app.post("/login", async (req, res) => {
                 .cookie("token", token, {
                   httpOnly: true,
                   secure: true,
-                  maxAge: 48 * 60 * 60 * 1000,
-                  path: "/",
+                  sameSite: false,
                 })
                 .json(userDoc);
             }
