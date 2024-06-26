@@ -4,7 +4,6 @@ const cors = require("cors");
 const dotenv = require("dotenv").config();
 const mongoose = require("mongoose");
 const User = require("./models/User");
-const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const download = require("image-downloader");
@@ -15,7 +14,6 @@ const path = require("path");
 const Place = require("./models/Place");
 const Booking = require("./models/Booking");
 
-const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = process.env.JWT_SECRET;
 
 app.use(express.json());
@@ -38,6 +36,12 @@ app.use(
 );
 
 mongoose.connect(process.env.MONGO_URL);
+
+app.use(express.static(path.join(__dirname, "client/build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname + "/client/build/index.html"));
+});
 
 app.get("/register", (req, res) => {
   res.json("test");
@@ -78,6 +82,8 @@ app.post("/login", async (req, res) => {
                   httpOnly: true,
                   secure: true,
                   sameSite: false,
+                  /*                   path: "/",
+                   */
                 })
                 .json(userDoc);
             }
